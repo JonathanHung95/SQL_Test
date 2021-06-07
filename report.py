@@ -26,7 +26,7 @@ print("Generating report...")
 
 db = mysql.connector.connect(host = "localhost",
                                 user = "root",
-                                password = "12345",
+                                password = "g0520886",
                                 database = "test")
 
 cursor = db.cursor()
@@ -50,16 +50,16 @@ cursor.execute("""
 
 # save to a dataframe, this is pretty much the base for our 2018 report details
 
-gross_net_margin_2018 = cursor.fetchall()
-gross_net_margin_2018_df = pd.DataFrame(gross_net_margin_2018, 
+gross_net_margin_this_year = cursor.fetchall()
+gross_net_margin_this_year_df = pd.DataFrame(gross_net_margin_this_year, 
                                             columns = ["raw_week", "week", "gross_revenue", "net_revenue", "margin_percentage"])
 
 # fix the issue where due to the week layout in sql, some years have a week 0 and some don't
 
-if gross_net_margin_2018_df.iloc[0]["raw_week"] != 0:
-    gross_net_margin_2018_df.loc[-1] = ["0", "00_2018", "", "", ""]
-    gross_net_margin_2018_df.index = gross_net_margin_2018_df.index + 1
-    gross_net_margin_2018_df.sort_index(inplace = True)
+if gross_net_margin_this_year_df.iloc[0]["raw_week"] != 0:
+    gross_net_margin_this_year_df.loc[-1] = ["0", "00_" + str(yesterday.year), "", "", ""]
+    gross_net_margin_this_year_df.index = gross_net_margin_this_year_df.index + 1
+    gross_net_margin_this_year_df.sort_index(inplace = True)
 
 # we also have to pull the same data for last year (2017 in this case)
 
@@ -79,14 +79,14 @@ cursor.execute("""
 
 # save to a new dataframe for 2017 data
 
-gross_net_margin_2017 = cursor.fetchall()
-gross_net_margin_2017_df = pd.DataFrame(gross_net_margin_2017, 
+gross_net_margin_last_year = cursor.fetchall()
+gross_net_margin_last_year_df = pd.DataFrame(gross_net_margin_last_year, 
                                             columns = ["raw_week", "week", "gross_revenue", "net_revenue", "margin_percentage"])
 
-if gross_net_margin_2017_df.iloc[0]["raw_week"] != 0:
-    gross_net_margin_2017_df.loc[-1] = ["0", "00_2017", "", "", ""]
-    gross_net_margin_2017_df.index = gross_net_margin_2017_df.index + 1
-    gross_net_margin_2017_df.sort_index(inplace = True)
+if gross_net_margin_last_year_df.iloc[0]["raw_week"] != 0:
+    gross_net_margin_last_year_df.loc[-1] = ["0", "00_" + str(last_year_yesterday.year), "", "", ""]
+    gross_net_margin_last_year_df.index = gross_net_margin_last_year_df.index + 1
+    gross_net_margin_last_year_df.sort_index(inplace = True)
 
 # SECOND PART
 # get the daily average gross and net revenue for the weeks generated (2018)
@@ -117,14 +117,14 @@ cursor.execute("""
 
 # add to a dataframe
 
-daily_avg_net_gross_2018 = cursor.fetchall()
-daily_avg_net_gross_2018_df = pd.DataFrame(daily_avg_net_gross_2018, 
+daily_avg_net_gross_this_year = cursor.fetchall()
+daily_avg_net_gross_this_year_df = pd.DataFrame(daily_avg_net_gross_this_year, 
                                                 columns = ["raw_week", "week", "daily_avg_gross_revenue", "daily_avg_net_revenue"])
 
-if daily_avg_net_gross_2018_df.iloc[0]["raw_week"] != 0:
-    daily_avg_net_gross_2018_df.loc[-1] = ["0", "00_2018", "", ""]
-    daily_avg_net_gross_2018_df.index = gross_net_margin_2018_df.index + 1
-    daily_avg_net_gross_2018_df.sort_index(inplace = True)
+if daily_avg_net_gross_this_year_df.iloc[0]["raw_week"] != 0:
+    daily_avg_net_gross_this_year_df.loc[-1] = ["0", "00_" + str(yesterday.year), "", ""]
+    daily_avg_net_gross_this_year_df.index = daily_avg_net_gross_this_year_df.index + 1
+    daily_avg_net_gross_this_year_df.sort_index(inplace = True)
 
 # get the same thing but for last year
 
@@ -154,14 +154,14 @@ cursor.execute("""
 
 # add to a dataframe
 
-daily_avg_net_gross_2017 = cursor.fetchall()
-daily_avg_net_gross_2017_df = pd.DataFrame(daily_avg_net_gross_2017, 
+daily_avg_net_gross_last_year = cursor.fetchall()
+daily_avg_net_gross_last_year_df = pd.DataFrame(daily_avg_net_gross_last_year, 
                                                 columns = ["raw_week", "week", "daily_avg_gross_revenue", "daily_avg_net_revenue"])
 
-if daily_avg_net_gross_2017_df.iloc[0]["raw_week"] != 0:
-    daily_avg_net_gross_2017_df.loc[-1] = ["0", "00_2017", "", ""]
-    daily_avg_net_gross_2017_df.index = gross_net_margin_2018_df.index + 1
-    daily_avg_net_gross_2017_df.sort_index(inplace = True)
+if daily_avg_net_gross_last_year_df.iloc[0]["raw_week"] != 0:
+    daily_avg_net_gross_last_year_df.loc[-1] = ["0", "00_" + str(last_year_yesterday.year), "", ""]
+    daily_avg_net_gross_last_year_df.index = daily_avg_net_gross_last_year_df.index + 1
+    daily_avg_net_gross_last_year_df.sort_index(inplace = True)
 
 # THIRD PART
 # get the period-over-period growth percentage for gross and net 2018
@@ -190,14 +190,14 @@ FROM CTE;
 
 # put it into another dataframe
 
-period_over_period_2018 = cursor.fetchall()
-period_over_period_2018_df = pd.DataFrame(period_over_period_2018, 
+period_over_period_this_year = cursor.fetchall()
+period_over_period_this_year_df = pd.DataFrame(period_over_period_this_year, 
                                             columns = ["raw_week", "week", "gross_revenue", "net_revenue", "gross_percentage_period_over_period_growth", "net_percentage_period_over_period_growth"])
 
-if period_over_period_2018_df.iloc[0]["raw_week"] != 0:
-    period_over_period_2018_df.loc[-1] = ["0", "00_2018", "", "", "", ""]
-    period_over_period_2018_df.index = period_over_period_2018_df.index + 1
-    period_over_period_2018_df.sort_index(inplace = True)
+if period_over_period_this_year_df.iloc[0]["raw_week"] != 0:
+    period_over_period_this_year_df.loc[-1] = ["0", "00_" + str(yesterday.year), "", "", "", ""]
+    period_over_period_this_year_df.index = period_over_period_this_year_df.index + 1
+    period_over_period_this_year_df.sort_index(inplace = True)
 
 # grab period-over-period data for 2017 as well
 
@@ -224,14 +224,14 @@ FROM CTE;
 
 # put into dataframe
 
-period_over_period_2017 = cursor.fetchall()
-period_over_period_2017_df = pd.DataFrame(period_over_period_2017, 
+period_over_period_last_year = cursor.fetchall()
+period_over_period_last_year_df = pd.DataFrame(period_over_period_last_year, 
                                             columns = ["raw_week", "week", "gross_revenue", "net_revenue", "gross_percentage_period_over_period_growth", "net_percentage_period_over_period_growth"])
 
-if period_over_period_2017_df.iloc[0]["raw_week"] != 0:
-    period_over_period_2017_df.loc[-1] = ["0", "00_2017", "", "", "", ""]
-    period_over_period_2017_df.index = period_over_period_2018_df.index + 1
-    period_over_period_2017_df.sort_index(inplace = True)
+if period_over_period_last_year_df.iloc[0]["raw_week"] != 0:
+    period_over_period_last_year_df.loc[-1] = ["0", "00_" + str(last_year_yesterday.year), "", "", "", ""]
+    period_over_period_last_year_df.index = period_over_period_last_year_df.index + 1
+    period_over_period_last_year_df.sort_index(inplace = True)
 
 # FOURTH PART
 # year over year gross revenue growth percentage as requested
@@ -272,8 +272,8 @@ year_over_year_gross_growth_df = pd.DataFrame(year_over_year_gross_growth,
                                                 columns = ["raw_week", "CTE1_week", "CTE2_week", "gross_percentage_year_over_year_growth"])
 
 if year_over_year_gross_growth_df.iloc[0]["raw_week"] != 0:
-    year_over_year_gross_growth_df.loc[-1] = ["0", "00_2018", "00_2017", ""]
-    year_over_year_gross_growth_df.index = period_over_period_2018_df.index + 1
+    year_over_year_gross_growth_df.loc[-1] = ["0", "00_" + str(yesterday.year), "00_" + str(last_year_yesterday.year), ""]
+    year_over_year_gross_growth_df.index = period_over_period_this_year_df.index + 1
     year_over_year_gross_growth_df.sort_index(inplace = True)
 
 # year over year net revenue growth percentage as requested
@@ -314,8 +314,8 @@ year_over_year_net_growth_df = pd.DataFrame(year_over_year_net_growth,
                                                 columns = ["raw_week", "CTE1_week", "CTE2_week", "net_percentage_year_over_year_growth"])
 
 if year_over_year_net_growth_df.iloc[0]["raw_week"] != 0:
-    year_over_year_net_growth_df.loc[-1] = ["0", "00_2017", "00_2017", ""]
-    year_over_year_net_growth_df.index = period_over_period_2018_df.index + 1
+    year_over_year_net_growth_df.loc[-1] = ["0", "00_" + str(yesterday.year), "00_" + str(last_year_yesterday.year), ""]
+    year_over_year_net_growth_df.index = period_over_period_this_year_df.index + 1
     year_over_year_net_growth_df.sort_index(inplace = True)
 
 
@@ -325,9 +325,9 @@ if year_over_year_net_growth_df.iloc[0]["raw_week"] != 0:
 
 # create the 2018 section first
 
-df_2018 = gross_net_margin_2018_df
-df_2018 = df_2018.join(daily_avg_net_gross_2018_df, on = "raw_week", rsuffix = "_a")
-df_2018 = df_2018.join(period_over_period_2018_df, on = "raw_week", rsuffix = "_b")
+df_2018 = gross_net_margin_this_year_df
+df_2018 = df_2018.join(daily_avg_net_gross_this_year_df, on = "raw_week", rsuffix = "_a")
+df_2018 = df_2018.join(period_over_period_this_year_df, on = "raw_week", rsuffix = "_b")
 df_2018 = df_2018.join(year_over_year_gross_growth_df, on = "raw_week", rsuffix = "_c")
 df_2018 = df_2018.join(year_over_year_net_growth_df, on = "raw_week", rsuffix = "_d")
 
@@ -338,20 +338,22 @@ df_2018 = df_2018.drop(["raw_week_a", "week_a", "raw_week_b", "week_b", "gross_r
 
 # create 2017 section
 
-df_2017 = gross_net_margin_2017_df
-df_2017 = df_2017.join(daily_avg_net_gross_2017_df, on = "raw_week", rsuffix = "_a")
-df_2017 = df_2017.join(period_over_period_2017_df, on = "raw_week", rsuffix = "_b")
+df_2017 = gross_net_margin_last_year_df
+df_2017 = df_2017.join(daily_avg_net_gross_last_year_df, on = "raw_week", rsuffix = "_a")
+df_2017 = df_2017.join(period_over_period_last_year_df, on = "raw_week", rsuffix = "_b")
 df_2017 = df_2017.drop(["raw_week_a", "week_a", "raw_week_b", "week_b", "gross_revenue_b", "net_revenue_b"], axis = 1)
 
 # combine the 2 parts and then reorganize into the final report
- 
-report_df = df_2018.join(df_2017, on = "raw_week", rsuffix = "_2017")
-report_df = report_df.drop(["CTE1_week", "CTE2_week", "raw_week_2017"], axis = 1)
+
+suffix = "_" + str(last_year_yesterday.year)
+report_df = df_2018.join(df_2017, on = "raw_week", rsuffix = suffix)
+report_df = report_df.drop(["CTE1_week", "CTE2_week", "raw_week" + suffix], axis = 1)
 
 organized_columns = ["raw_week", "week", "gross_revenue", "daily_avg_gross_revenue", "net_revenue", "daily_avg_net_revenue", "margin_percentage", 
                         "gross_percentage_period_over_period_growth", "net_percentage_period_over_period_growth", "gross_percentage_year_over_year_growth", 
-                        "net_percentage_year_over_year_growth", "week_2017", "gross_revenue_2017", "daily_avg_gross_revenue_2017", "net_revenue_2017", 
-                        "daily_avg_net_revenue_2017", "margin_percentage_2017", "gross_percentage_period_over_period_growth_2017", "net_percentage_period_over_period_growth_2017"]
+                        "net_percentage_year_over_year_growth", "week" + suffix, "gross_revenue" + suffix, "daily_avg_gross_revenue" + suffix, "net_revenue" + suffix, 
+                        "daily_avg_net_revenue" + suffix, "margin_percentage" + suffix, "gross_percentage_period_over_period_growth" + suffix, 
+                        "net_percentage_period_over_period_growth" + suffix]
 
 report_df = report_df[organized_columns]
 
@@ -360,41 +362,4 @@ report_df = report_df[organized_columns]
 report_df.to_excel("report_" + yesterday.strftime("%Y-%m-%d") + ".xlsx", index = False)
 print("...Report generated!")
 
-# send out the email report
-# we use dummy emails here
 
-msg = MIMEMultipart()
-
-msg["To"] = "insert_recepeints_here@email.com"
-msg["From"] = "insert_my_email_here@email.com"
-msg["Subject"] = "Report for " + yesterday.strftime("%Y-%m-%d")
-
-html = """\
-        <html>
-            Hi, <br>
-            <br>
-            Attached is the report for {}.
-            <br>
-            <br>
-            Thank you, <br>
-            Jonathan Hung
-        </html>
-        """.format(yesterday.strftime("%Y-%m-%d"))
-
-html_part = MIMEText(html, "html")
-msg.attach(html_part)
-
-fp = open("report_" + yesterday.strftime("%Y-%m-%d") + ".xlsx", "rb")
-xlsx_part = MIMEBase("application", "vnd.ms-excel")
-xlsx_part.set_payload(fp.read())
-
-fp.close()
-
-encoders.encode_base64(xlsx_part)
-xlsx_part.add_header("Content-Disposition", "attachment", filename = "report_" + yesterday.strftime("%Y-%m-%d") + ".xlsx")
-msg.attach(xlsx_part)
-
-s = smtplib.SMTP("insert_smtp_server_here")
-
-s.sendmail("insert_my_email_here@email.com", ["list_of_receipients_here"], msg.as_string())
-s.quit()
