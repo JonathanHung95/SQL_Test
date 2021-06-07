@@ -362,4 +362,41 @@ report_df = report_df[organized_columns]
 report_df.to_excel("report_" + yesterday.strftime("%Y-%m-%d") + ".xlsx", index = False)
 print("...Report generated!")
 
+# send out the email report
+# we use dummy emails here
 
+msg = MIMEMultipart()
+
+msg["To"] = "insert_recepeints_here@email.com"
+msg["From"] = "insert_my_email_here@email.com"
+msg["Subject"] = "Report for " + yesterday.strftime("%Y-%m-%d")
+
+html = """\
+        <html>
+            Hi, <br>
+            <br>
+            Attached is the report for {}.
+            <br>
+            <br>
+            Thank you, <br>
+            Jonathan Hung
+        </html>
+        """.format(yesterday.strftime("%Y-%m-%d"))
+
+html_part = MIMEText(html, "html")
+msg.attach(html_part)
+
+fp = open("report_" + yesterday.strftime("%Y-%m-%d") + ".xlsx", "rb")
+xlsx_part = MIMEBase("application", "vnd.ms-excel")
+xlsx_part.set_payload(fp.read())
+
+fp.close()
+
+encoders.encode_base64(xlsx_part)
+xlsx_part.add_header("Content-Disposition", "attachment", filename = "report_" + yesterday.strftime("%Y-%m-%d") + ".xlsx")
+msg.attach(xlsx_part)
+
+s = smtplib.SMTP("insert_smtp_server_here")
+
+s.sendmail("insert_my_email_here@email.com", ["list_of_receipients_here"], msg.as_string())
+s.quit()
