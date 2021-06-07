@@ -1,5 +1,7 @@
 # SQL_Test
-Code and documentation for the SQL Test from WCD.
+Code and documentation for the SQL Test from WCD. 
+
+Runs sql queries to pull data from the given sql dump, formats it into an excel file and can send out an email with the excel file attached.
 
 ### Documentation of any questions/uncertainties and decisions you had to make along the way
 
