@@ -26,7 +26,7 @@ print("Generating report...")
 
 db = mysql.connector.connect(host = "localhost",
                                 user = "root",
-                                password = "g0520886",
+                                password = "12345",
                                 database = "test")
 
 cursor = db.cursor()
