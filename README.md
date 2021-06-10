@@ -14,6 +14,7 @@ Due to 2017 starting on a different day than 2018, I had to add in some python c
 1. I would write some of the code as functions.  The repeated lines to generate the results from the sql query [cursor.fetchall()] and to store it in a dataframe could have been written up as a function to make the code a bit neater and easier to read.
 2. Potentially write a DAG to have airflow automatically run the report daily.  Additional automation of the report.
 3. If not a DAG, then at least a BAT file and have the task scheduler run the report automatically.
+4. Write the SQL queries to a seperate file to keep the main report code neater.
 
 ### Provide an analysis of the report results. What is going on with the business? 
 
